@@ -1,29 +1,28 @@
 'use client'
-import React, { useRef, useState } from 'react'
-import Image from 'next/image'
-import { Button } from 'antd'
-
+import React, { useState } from 'react';
+// import Image from 'next/image'
+import { Button } from 'antd';
+import { UploadOutlined } from '@ant-design/icons'
 
 export default function Home() {
-  const hiddenInputUpload = useRef(null);
-
   const [pathImage, setPathImage] = useState<File | null>(null);
+  const [resultJson, setResultJson] = useState('Phan Hoàng Gay');
 
   return (
     <div
-      className='flex h-full w-full'
+      className='flex h-screen bg-blue-100'
     >
       <div
-        className='w-[50%] h-full border-[1px] border-black'
+        className='w-[50%] h-full border-[1px] border-black p-2 space-y-2'
       >
         <div
           className='w-full'
         >
           <input
-            ref={hiddenInputUpload}
+            id={'input image'}
             onChange={e => {
               const files = e.target.files?.[0];
-              if(files) {
+              if (files) {
                 setPathImage(files);
               }
             }}
@@ -34,25 +33,29 @@ export default function Home() {
           <Button
             children='Upload image'
             onClick={(e) => {
-              if (hiddenInputUpload && hiddenInputUpload.current) {
-                hiddenInputUpload?.current?.click()
-              }
+              document.getElementById('input image')?.click()
             }}
+            className='bg-blue-500 text-white'
+            icon={<UploadOutlined />}
           />
         </div>
-        <Image
-          src={pathImage ? URL.createObjectURL(pathImage) : ''}
+        <img
+          src={pathImage != null ? URL.createObjectURL(pathImage) : undefined}
           alt=''
-          width={500}
-          height={500}
-          className='w-full h-full'
+          className='w-full'
         />
       </div>
 
       <div
-        className='w-[50%] h-full flex justify-center'
+        className='w-[50%] h-full border-[1px] border-black space-x-2'
       >
-        show result json here
+        <div
+          className='flex flex-col items-center'
+        >
+          Show result json here
+        </div>
+
+        <p>{resultJson}</p>
       </div>
     </div>
   )
