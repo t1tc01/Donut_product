@@ -1,5 +1,8 @@
 from http import HTTPStatus
-from fastapi import FastAPI, File, UploadFile
+from fastapi import FastAPI, File, UploadFile, Request
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+from json import JSONDecodeError
 import uvicorn
 
 
@@ -12,9 +15,20 @@ import time
 
 from PIL import Image
 
+origins = ["http://localhost:8080"]
+
+
 app = FastAPI(
     title="Document Parsing Invoice using Donut",
     description=""
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 @app.on_event("startup")
@@ -72,10 +86,10 @@ def test_predict():
 
 
 
-@app.post("/predict/", tags=["Prediction"])
-def predict(file: UploadFile = File(...)):
+@app.post("/predict", tags=["Prediction"])
+async def predict(file: UploadFile = File(...)):
 
-    #Read and pre-process image
+    # #Read and pre-process image
     image = Image.open(file.file)
     pixel_values = processor(image, return_tensors="pt").pixel_values
 
